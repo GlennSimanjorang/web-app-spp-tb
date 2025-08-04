@@ -8,19 +8,18 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('academic_years', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->enum('role', ['admin', 'parent']);
-            $table->string('phone_number')->unique();
-            $table->string('email')->unique();
-            $table->text('password');
+            $table->string('school_year', 9); 
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('academic_years');
     }
 };
