@@ -1,4 +1,3 @@
-// app/Http/Controllers/NotificationController.php
 <?php
 
 namespace App\Http\Controllers;
@@ -7,6 +6,7 @@ use App\Formatter;
 use App\Models\Bill;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class NotificationController extends Controller
 {
@@ -91,7 +91,7 @@ class NotificationController extends Controller
         ]);
 
         $notification = Notification::create([
-            'id' => \Str::uuid(),
+            'id' => Str::uuid(),
             'title' => $request->title,
             'message' => $request->message,
             'type' => $request->type,

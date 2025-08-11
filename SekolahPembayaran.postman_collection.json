@@ -1,0 +1,373 @@
+{
+    "info": {
+        "name": "SekolahPembayaran - API Collection",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": "API Collection untuk sistem manajemen pembayaran sekolah dengan Xendit. Termasuk CRUD, pembuatan VA, invoice, webhook, laporan, dan notifikasi."
+    },
+    "item": [
+        {
+            "name": "1. Academic Years",
+            "item": [
+                {
+                    "name": "GET - List Tahun Ajaran",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/academic-years",
+                            "host": ["{{base_url}}"],
+                            "path": ["academic-years"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat Tahun Ajaran",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"school_year\": \"2025/2026\",\n  \"start_date\": \"2025-07-01\",\n  \"end_date\": \"2026-06-30\",\n  \"is_active\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/academic-years",
+                            "host": ["{{base_url}}"],
+                            "path": ["academic-years"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Payment Categories",
+            "item": [
+                {
+                    "name": "GET - List Kategori",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/payment-categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat Kategori",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"SPP Bulanan\",\n  \"amount\": 300000,\n  \"frequency\": \"monthly\",\n  \"description\": \"Biaya SPP bulanan\",\n  \"is_active\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payment-categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-categories"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Users (Orang Tua)",
+            "item": [
+                {
+                    "name": "GET - List Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": ["{{base_url}}"],
+                            "path": ["users"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"phone_number\": \"081234567893\",\n  \"email\": \"budi@example.com\",\n  \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": ["{{base_url}}"],
+                            "path": ["users"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Students",
+            "item": [
+                {
+                    "name": "GET - List Siswa",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/students",
+                            "host": ["{{base_url}}"],
+                            "path": ["students"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat Siswa",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Rina Putri\",\n  \"nisn\": \"1234567893\",\n  \"kelas\": \"X IPA 1\",\n  \"user_id\": \"ganti-dengan-user-id\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/students",
+                            "host": ["{{base_url}}"],
+                            "path": ["students"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "5. Bills (Tagihan)",
+            "item": [
+                {
+                    "name": "GET - List Tagihan",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/bills",
+                            "host": ["{{base_url}}"],
+                            "path": ["bills"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat Tagihan",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"bill_number\": \"INV-002\",\n  \"month_year\": \"2024-08\",\n  \"due_date\": \"2024-08-10\",\n  \"amount\": 300000,\n  \"status\": \"unpaid\",\n  \"payment_categories_id\": \"ganti-dengan-category-id\",\n  \"student_id\": \"ganti-dengan-student-id\",\n  \"academic_years_id\": \"ganti-dengan-academic-year-id\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/bills",
+                            "host": ["{{base_url}}"],
+                            "path": ["bills"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "6. Xendit - Virtual Account",
+            "item": [
+                {
+                    "name": "POST - Buat VA",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"bank_code\": \"BNI\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/xendit/bills/{{bill_id}}/create-va",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "xendit",
+                                "bills",
+                                "{{bill_id}}",
+                                "create-va"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "7. Xendit - Invoice",
+            "item": [
+                {
+                    "name": "POST - Buat Invoice",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/xendit/bills/{{bill_id}}/create-invoice",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "xendit",
+                                "bills",
+                                "{{bill_id}}",
+                                "create-invoice"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "8. Xendit Callback (Simulasi)",
+            "item": [
+                {
+                    "name": "POST - Simulasi VA Dibayar",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"event\": \"virtual_account.paid\",\n  \"id\": \"va_123456789\",\n  \"external_id\": \"va-{{bill_id}}\",\n  \"amount\": 300000,\n  \"payment_id\": \"pay_123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/xendit/callback",
+                            "host": ["{{base_url}}"],
+                            "path": ["xendit", "callback"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "9. Laporan Pembayaran",
+            "item": [
+                {
+                    "name": "POST - Generate Laporan Harian",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"date\": \"2025-08-05\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/reports/daily",
+                            "host": ["{{base_url}}"],
+                            "path": ["reports", "daily"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET - List Laporan",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/reports",
+                            "host": ["{{base_url}}"],
+                            "path": ["reports"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "10. Notifikasi",
+            "item": [
+                {
+                    "name": "GET - Notifikasi User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/{{user_id}}/notifications",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "{{user_id}}", "notifications"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST - Buat Notifikasi Manual",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Pembayaran Berhasil\",\n  \"message\": \"Tagihan SPP telah dibayar.\",\n  \"type\": \"payment_success\",\n  \"user_id\": \"{{user_id}}\",\n  \"bill_id\": \"{{bill_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications",
+                            "host": ["{{base_url}}"],
+                            "path": ["notifications"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+{
+    "name": "SekolahDev",
+    "values": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "type": "text"
+        },
+        { "key": "bill_id", "value": "", "type": "text" },
+        { "key": "user_id", "value": "", "type": "text" }
+    ]
+}
+    ]
+}
