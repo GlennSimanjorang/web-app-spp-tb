@@ -8,3 +8,5 @@ Route::apiResource('payment-categories', \App\Http\Controllers\PaymentCategoryCo
 Route::apiResource('users', \App\Http\Controllers\UserController::class);
 Route::apiResource('students', \App\Http\Controllers\StudentController::class);
 Route::apiResource('bills', \App\Http\Controllers\BillController::class);
+Route::apiResource('payment-reports', \App\Http\Controllers\PaymentReportController::class);
+
