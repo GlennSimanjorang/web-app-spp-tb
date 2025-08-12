@@ -13,10 +13,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('nisn', 20)->unique();
             $table->string('kelas', 10);
-            $table->uuid('user_id');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();;
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

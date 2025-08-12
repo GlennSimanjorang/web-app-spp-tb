@@ -6,6 +6,7 @@ use App\Formatter;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class BillController extends Controller
 {
@@ -17,7 +18,8 @@ class BillController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(),
+        [
             'bill_number' => 'required|string|unique:bills',
             'month_year' => 'nullable|string|max:7',
             'due_date' => 'required|date',

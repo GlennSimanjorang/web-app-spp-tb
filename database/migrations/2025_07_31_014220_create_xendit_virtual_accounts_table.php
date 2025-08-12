@@ -17,10 +17,8 @@ return new class extends Migration
             $table->boolean('is_closed')->default(false);
             $table->timestamp('expiration_date');
             $table->decimal('expected_amount', 15, 2);
-            $table->uuid('bill_id');
+            $table->foreignUuid('bill_id')->constrained('bills')->cascadeOnDelete();
             $table->timestamps();
-
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
         });
     }
 

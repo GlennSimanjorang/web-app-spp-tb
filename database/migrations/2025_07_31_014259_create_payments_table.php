@@ -27,16 +27,11 @@ return new class extends Migration
             $table->string('xendit_external_id', 100)->nullable();
             $table->enum('status', ['pending', 'settled', 'failed', 'cancelled'])->default('pending');
             $table->json('callback_data')->nullable();
-            $table->uuid('processed_by')->nullable();
-            $table->uuid('bill_id');
-            $table->uuid('xendit_virtual_account_id')->nullable();
-            $table->uuid('xendit_invoice_id')->nullable();
             $table->timestamps();
-
-            $table->foreign('processed_by')->references('id')->on('users');
-            $table->foreign('bill_id')->references('id')->on('bills');
-            $table->foreign('xendit_virtual_account_id')->references('id')->on('xendit_virtual_accounts');
-            $table->foreign('xendit_invoice_id')->references('id')->on('xendit_invoices');
+            $table->foreignUuid('processed_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('bill_id')->constrained('bills')->cascadeOnDelete();
+            $table->foreignUuid('xendit_virtual_account_id')->constrained('xendit_virtual_accounts')->cascadeOnDelete();
+            $table->foreignUuid('xendit_invoice_id')->constrained('xendit_invoices')->cascadeOnDelete();
         });
 
         DB::statement("

@@ -13,10 +13,8 @@ return new class extends Migration
             $table->enum('alert_type', ['upcoming', 'overdue', 'critical']);
             $table->date('alert_date');
             $table->boolean('is_processed')->default(false);
-            $table->uuid('bill_id');
             $table->timestamps();
-
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreignUuid('bill_id')->constrained('bills')->cascadeOnDelete();
         });
     }
 

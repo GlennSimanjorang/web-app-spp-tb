@@ -5,12 +5,14 @@ use App\Formatter;
 use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class AcademicYearController extends Controller
 {
     public function index()
     {
-        $years = AcademicYear::orderBy('start_date', 'desc')->get()->SimplePaginate(5);
+        $years = AcademicYear::orderBy('start_date', 'desc')->SimplePaginate(5);
         return Formatter::apiResponse(200, 'Data tahun ajaran', $years);
     }
 

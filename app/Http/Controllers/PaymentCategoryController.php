@@ -6,24 +6,30 @@ use App\Formatter;
 use App\Models\PaymentCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentCategoryController extends Controller
 {
     public function index()
     {
-        $categories = PaymentCategory::orderBy('name')->get()->SimplePaginate(5);
+        $categories = PaymentCategory::orderBy('name')->SimplePaginate(5);
         return Formatter::apiResponse(200, 'Data kategori pembayaran', $categories);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'amount' => 'required|numeric|min:0',
-            'frequency' => 'required|in:monthly,yearly,once',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean'
-        ]);
+        $validator = Validator::make($request->all(), 
+            [
+                'name' => 'required|string|max:100',
+                'amount' => 'required|numeric|min:0',
+                'frequency' => 'required|in:monthly,yearly,once',
+                'description' => 'nullable|string',
+                'is_active' => 'boolean'
+            ]);
+            
+        if ($validator->fails()) {
+            return Formatter::apiResponse(422, 'Validasi gagal', $validator->errors());
+        }
 
         $category = PaymentCategory::create([
             'sqlid' => Str::uuid(),
