@@ -15,9 +15,9 @@ return new class extends Migration
             $table->date('due_date');
             $table->decimal('amount', 15, 2);
             $table->enum('status', ['unpaid', 'paid', 'overdue', 'cancelled'])->default('unpaid');
-            $table->foreignUuid('payment_categories_id')->constrained('payment_categories');
+            $table->foreignUuid('payment_categories_id')->constrained('payment_categories')->cascadeOnDelete();
             $table->foreignUuid('student_id')->constrained('students')->cascadeOnDelete();
-            $table->foreignUuid('academic_years_id')->constrained('academic_years');
+            $table->foreignUuid('academic_years_id')->constrained('academic_years')->cascadeOnDelete();
 
             $table->timestamps();
         });

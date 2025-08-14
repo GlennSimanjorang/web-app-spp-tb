@@ -51,16 +51,18 @@ class StudentController extends Controller
         $student = Student::find($id);
         if (!$student) return Formatter::apiResponse(404, 'Tidak ditemukan');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'string|max:100',
             'nisn' => 'string|unique:students,nisn,' . $id . ',id',
             'kelas' => 'string|max:10',
             'user_id' => 'string|exists:users,id'
         ]);
 
-        $student->update($request->only(['name', 'nisn', 'kelas', 'user_id']));
+        if ($validator->fails()) {
+            return Formatter::apiResponse(404, 'Validasi gagal', $validator->errors());
+        }
 
-        return Formatter::apiResponse(200, 'Siswa diperbarui', $student);
+        $student->update($request->only(['name', 'nisn', 'kelas', 'user_id']));
     }
 
     public function destroy($id)
