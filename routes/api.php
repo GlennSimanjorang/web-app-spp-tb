@@ -7,15 +7,15 @@ Route::apiResource('payment-categories', \App\Http\Controllers\PaymentCategoryCo
 Route::apiResource('users', \App\Http\Controllers\UserController::class);
 Route::apiResource('students', \App\Http\Controllers\StudentController::class);
 Route::apiResource('bills', \App\Http\Controllers\BillController::class);
-Route::prefix('xendit')->group(function () {
-    Route::post('/bills/{billId}/create-va', [\App\Http\Controllers\XenditVirtualAccountController::class, 'createVirtualAccount']);
-    Route::post('/bills/{billId}/create-invoice', [\App\Http\Controllers\XenditInvoiceController::class, 'createInvoice']);
-});
 
-Route::get('/xendit/va/{id}', [\App\Http\Controllers\XenditVirtualAccountController::class, 'show']);
-Route::get('/xendit/bills/{billId}/va', [\App\Http\Controllers\XenditVirtualAccountController::class, 'getByBill']);
-Route::get('/xendit/invoice/{id}', [\App\Http\Controllers\XenditInvoiceController::class, 'show']);
-Route::get('/xendit/bills/{billId}/invoice', [\App\Http\Controllers\XenditInvoiceController::class, 'getByBill']);
+
+
+Route::get('/xendit/invoices/{invoiceId}', [\App\Http\Controllers\XenditInvoiceController::class, 'checkStatus']); // Ganti 'show' menjadi 'checkStatus'
+Route::get('/bills/{billId}/invoice', [\App\Http\Controllers\XenditInvoiceController::class, 'getByBill']);
+Route::post('/bills/{billId}/invoice', [\App\Http\Controllers\XenditInvoiceController::class, 'storeByBill']);
+
+// Tambahkan rute baru untuk checkStatus (jika ingin endpoint khusus)
+Route::get('/xendit/invoices/{invoiceId}/status', [\App\Http\Controllers\XenditInvoiceController::class, 'checkStatus']);
 Route::get('/payments', [\App\Http\Controllers\PaymentController::class, 'index']);
 Route::get('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'show']);
 Route::get('/bills/{billId}/payments', [\App\Http\Controllers\PaymentController::class, 'getByBill']);

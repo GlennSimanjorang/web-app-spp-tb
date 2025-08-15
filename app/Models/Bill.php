@@ -41,11 +41,6 @@ class Bill extends Model
         return $this->belongsTo(AcademicYear::class, 'academic_years_id');
     }
 
-    public function virtualAccount()
-    {
-        return $this->hasOne(XenditVirtualAccount::class, 'bill_id');
-    }
-
     public function invoice()
     {
         return $this->hasOne(XenditInvoice::class, 'bill_id');

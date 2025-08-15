@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Validator;
+
 
 class AcademicYearController extends Controller
 {
@@ -18,7 +20,7 @@ class AcademicYearController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'school_year' => 'required|string|max:9',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',

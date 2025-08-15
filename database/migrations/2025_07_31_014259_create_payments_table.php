@@ -30,16 +30,10 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignUuid('processed_by')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('bill_id')->constrained('bills')->cascadeOnDelete();
-            $table->foreignUuid('xendit_virtual_account_id')->constrained('xendit_virtual_accounts')->cascadeOnDelete();
             $table->foreignUuid('xendit_invoice_id')->constrained('xendit_invoices')->cascadeOnDelete();
         });
 
-        DB::statement("
-            ALTER TABLE payments ADD CONSTRAINT chk_payment_source CHECK (
-                (xendit_virtual_account_id IS NOT NULL AND xendit_invoice_id IS NULL) OR
-                (xendit_virtual_account_id IS NULL AND xendit_invoice_id IS NOT NULL)
-            )
-        ");
+
     }
 
     public function down()

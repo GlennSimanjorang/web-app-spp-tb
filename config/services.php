@@ -27,7 +27,6 @@ return [
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
-
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
@@ -36,6 +35,6 @@ return [
     ],
     'xendit' => [
         'secret_key' => env('XENDIT_SECRET_KEY'),
+        'public_key' => env('XENDIT_PUBLIC_KEY'),
     ],
-
 ];
