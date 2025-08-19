@@ -25,45 +25,67 @@ class XenditInvoiceController extends Controller
     {
         $bill = Bill::with('student.user')->findOrFail($billId);
 
-        // Kalau invoice sudah ada, hentikan
         if ($bill->invoice) {
-            return Formatter::apiResponse(400, 'Invoice untuk bill ini sudah ada', $bill->invoice);
+            return Formatter::apiResponse(400, 'Invoice untuk tagihan ini sudah ada', $bill->invoice);
         }
 
-        // Validasi email (opsional)
-        $validate = Validator::make($request->all(), [
+        // Cek siapa yang login
+        $currentUser = auth()->user();
+
+        // Tentukan payer_email dan customer_name
+        $payerEmail = $request->payer_email
+            ?? $currentUser->email
+            ?? $bill->student->user->email;
+
+        $customerName = match ($currentUser->role) {
+            'parent' => $currentUser->name,
+            'admin' => $bill->student->name,
+            default => $bill->student->name,
+        };
+
+        // Validasi opsional
+        $validator = Validator::make($request->all(), [
             'payer_email' => 'nullable|email'
         ]);
-        if ($validate->fails()) {
-            return Formatter::apiResponse(422, 'Validasi gagal', $validate->errors());
+
+        if ($validator->fails()) {
+            return Formatter::apiResponse(422, 'Validasi gagal', null, $validator->errors());
         }
 
-        $externalId = 'invoice-' . $bill->id . '-' . uniqid('', true);
-        $payerEmail = $request->payer_email ?? $bill->student->user->email;
+        $externalId = 'inv-' . $bill->id . '-' . uniqid('', true);
 
         $result = $this->xenditService->createInvoice(
             $externalId,
             $payerEmail,
             "Pembayaran tagihan {$bill->bill_number}",
-            $bill->amount
+            $bill->amount,
+            $customerName  // tambahkan nama ke service
         );
 
         if (!$result['success']) {
-            return Formatter::apiResponse(500, 'Gagal membuat invoice', $result['message']);
+            return Formatter::apiResponse(500, 'Gagal membuat invoice', null, $result['message']);
         }
 
         $invoiceData = $result['data'];
+
         $invoice = XenditInvoice::create([
-            'bill_id'       => $bill->id,
-            'external_id'   => $invoiceData['external_id'],
-            'invoice_id'    => $invoiceData['id'],
-            'status'        => $invoiceData['status'],
-            'amount'        => $invoiceData['amount'],
-            'invoice_url'   => $invoiceData['invoice_url'],
-            'expiry_date'   => $invoiceData['expiry_date'] ?? null,
+            'id' => \Str::uuid(),
+            'bill_id' => $bill->id,
+            'external_id' => $invoiceData['external_id'],
+            'xendit_invoice_id' => $invoiceData['id'],
+            'status' => $invoiceData['status'],
+            'amount' => $invoiceData['amount'],
+            'invoice_url' => $invoiceData['invoice_url'],
+            'expiry_date' => $invoiceData['expiry_date'] ?? null,
+            'customer_name' => $customerName,
+            'customer_email' => $payerEmail,
+            'customer_phone' => $bill->student->user->phone_number ?? null,
         ]);
 
-        return Formatter::apiResponse(201, 'Invoice berhasil dibuat', $invoice);
+        return Formatter::apiResponse(201, 'Invoice berhasil dibuat', [
+            'invoice' => $invoice,
+            'invoice_url' => $invoice->invoice_url
+        ]);
     }
 
     /**

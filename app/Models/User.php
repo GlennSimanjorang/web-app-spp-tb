@@ -1,14 +1,16 @@
 <?php
 
 namespace App\Models;
-
-
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class User extends Model
 {
-
+    use HasFactory, HasApiTokens;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -37,7 +39,7 @@ class User extends Model
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
-    
+
 
 
 }

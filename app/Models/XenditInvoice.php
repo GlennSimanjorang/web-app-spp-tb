@@ -26,7 +26,7 @@ class XenditInvoice extends Model
     protected static function boot()
     {
         parent::boot();
-        static::creating(fn($model) => $model->sqlid = Str::uuid());
+        static::creating(fn($model) => $model->id = Str::uuid());
     }
     public function bill()
     {

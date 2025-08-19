@@ -3,80 +3,116 @@
 namespace App\Services;
 
 use Exception;
-use Xendit\Configuration;
-use Xendit\Invoice\CreateInvoiceRequest;
-use Xendit\Invoice\InvoiceApi;
-
+use Illuminate\Support\Facades\Http;
 
 class XenditService
 {
-    protected InvoiceApi $invoiceApi;
+    protected string $secretKey;
+    protected string $baseUrl = 'https://api.xendit.co';
 
     public function __construct()
     {
-        // Ambil Secret Key dari config
-        $apiKey = config('services.xendit.secret_key');
+        $this->secretKey = config('services.xendit.secret_key');
 
-        if (empty($apiKey)) {
-            throw new Exception('Xendit Secret Key belum diatur. Pastikan .env berisi XENDIT_SECRET_KEY dan config sudah di-clear.');
+        if (empty($this->secretKey)) {
+            throw new Exception('Xendit Secret Key belum diatur di .env');
         }
 
-        // Validasi prefix key (development atau production)
-        if (!str_starts_with($apiKey, 'xnd_development_') && !str_starts_with($apiKey, 'xnd_production_')) {
-            throw new Exception('Xendit Secret Key format tidak valid. Pastikan menggunakan key dari dashboard Xendit.');
+        if (!str_starts_with($this->secretKey, 'xnd_development_') &&
+            !str_starts_with($this->secretKey, 'xnd_production_')) {
+            throw new Exception('Format Xendit Secret Key tidak valid. Harus dimulai dengan xnd_development_ atau xnd_production_');
         }
-
-        // Set API Key untuk semua request
-        Configuration::setDefaultConfiguration(
-            Configuration::getDefaultConfiguration()->setApiKey('Authorization', $apiKey)
-        );
-
-        $this->invoiceApi = new InvoiceApi();
     }
 
+    /**
+     * Buat Invoice Xendit
+     */
     public function createInvoice(
-        string $external_id,
+        string $externalId,
         string $payerEmail,
         string $description,
-        float $amount
+        float $amount,
+        ?string $customerName = null
     ): array {
-        try {
-            $request = new CreateInvoiceRequest([
-                'external_id'       => $external_id,
-                'payer_email'       => $payerEmail,
-                'description'       => $description,
-                'amount'            => $amount,
-                'invoice_duration'  => 86400, // 24 jam
-                'should_send_email' => false,
-                'currency'          => 'IDR',
-            ]);
+        $url = $this->baseUrl . '/v2/invoices';
 
-            $invoice = $this->invoiceApi->createInvoice($request);
+        try {
+            $payload = [
+                'external_id' => $externalId,
+                'payer_email' => $payerEmail,
+                'description' => $description,
+                'amount' => round($amount, 2),
+                'invoice_duration' => 86400, // 24 jam
+                'currency' => 'IDR',
+                'should_send_email' => false,
+                'success_redirect_url' => config('app.url') . '/payment/success',
+                'failure_redirect_url' => config('app.url') . '/payment/failed',
+            ];
+
+            // Tambahkan customer name jika ada
+            if ($customerName) {
+                $payload['customer'] = ['given_name' => $customerName];
+            }
+
+            $response = Http::withBasicAuth($this->secretKey, '')
+                ->timeout(30)
+                ->post($url, $payload);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'data' => $response->json()
+                ];
+            }
+
+            $error = $response->json();
+            $message = $error['message'] ?? $response->body();
 
             return [
-                'success' => true,
-                'data'    => $invoice
+                'success' => false,
+                'message' => $message,
+                'details' => $error
             ];
         } catch (Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Gagal membuat invoice: ' . $e->getMessage()
+                'message' => 'Gagal terhubung ke Xendit: ' . $e->getMessage(),
+                'exception' => get_class($e),
+                'trace' => app()->environment('local') ? $e->getTrace() : null
             ];
         }
     }
 
-    public function getInvoice(string $invoice_id): array
+    /**
+     * Ambil detail invoice dari Xendit
+     */
+    public function getInvoice(string $invoiceId): array
     {
+        $url = $this->baseUrl . '/v2/invoices/' . $invoiceId;
+
         try {
-            $invoice = $this->invoiceApi->getInvoiceById($invoice_id);
+            $response = Http::withBasicAuth($this->secretKey, '')
+                ->timeout(10)
+                ->get($url);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'data' => $response->json()
+                ];
+            }
+
+            $error = $response->json();
+            $message = $error['message'] ?? $response->body();
+
             return [
-                'success' => true,
-                'data'    => $invoice
+                'success' => false,
+                'message' => $message
             ];
         } catch (Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Gagal mengambil data invoice: ' . $e->getMessage()
+                'message' => 'Gagal ambil data invoice: ' . $e->getMessage()
             ];
         }
     }
