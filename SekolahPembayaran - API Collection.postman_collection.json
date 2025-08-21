@@ -1,0 +1,891 @@
+{
+	"info": {
+		"_postman_id": "15fb3179-f756-4fa0-ab47-1a72d20021b1",
+		"name": "SekolahPembayaran - API Collection",
+		"description": "API Collection untuk sistem manajemen pembayaran sekolah dengan Xendit. Termasuk CRUD, pembuatan VA, invoice, webhook, laporan, dan notifikasi.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39118944"
+	},
+	"item": [
+		{
+			"name": "1. Academic Years",
+			"item": [
+				{
+					"name": "GET - List Tahun Ajaran",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/academic-years",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"academic-years"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tahun Ajaran",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"school_year\": \"2025/2026\",\n  \"start_date\": \"2025-07-01\",\n  \"end_date\": \"2026-06-30\",\n  \"is_active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/academic-years",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"academic-years"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tahun Ajaran Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"school_year\": \"2025/2026\",\n  \"start_date\": \"2025-07-01\",\n  \"end_date\": \"2026-06-30\",\n  \"is_active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/academic-years/f676abad-43be-44b1-93fd-4f54e96b91d7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"academic-years",
+								"f676abad-43be-44b1-93fd-4f54e96b91d7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tahun Ajaran Copy 2",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/academic-years/f676abad-43be-44b1-93fd-4f54e96b91d7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"academic-years",
+								"f676abad-43be-44b1-93fd-4f54e96b91d7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Payment Categories",
+			"item": [
+				{
+					"name": "GET - List Kategori",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/payment-categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Kategori",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"SPP Bulanan\",\n  \"amount\": 300000,\n  \"frequency\": \"monthly\",\n  \"description\": \"Biaya SPP bulanan\",\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Kategori Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"SPP Bulanan\",\n  \"amount\": 700000,\n  \"frequency\": \"yearly\",\n  \"description\": \"Biaya SPP bulanan\",\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-categories/d35891e7-4c8c-431e-acbc-f2180b77134e",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-categories",
+								"d35891e7-4c8c-431e-acbc-f2180b77134e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Kategori Copy 2",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-categories/6a7f05ba-4bad-408b-bdc8-92d27b14e1e2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-categories",
+								"6a7f05ba-4bad-408b-bdc8-92d27b14e1e2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Users (Orang Tua)",
+			"item": [
+				{
+					"name": "GET - List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET - List Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.9"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 12 Aug 2025 02:59:58 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Daftar orang tua\",\n    \"content\": {\n        \"current_page\": 1,\n        \"current_page_url\": \"http://127.0.0.1:8000/api/users?page=1\",\n        \"data\": [\n            {\n                \"id\": \"68c63ac7-940e-4c37-8dad-3d65341ad4a8\",\n                \"name\": \"Siti Rahayu\",\n                \"role\": \"parent\",\n                \"phone_number\": \"081234567891\",\n                \"email\": \"siti@example.com\",\n                \"password\": \"$2y$12$pxqBGCwpV6F6v5X8OZMKpucDxVdWHtMR8RRSC.rrmJqB.xpEyWY9K\",\n                \"created_at\": \"2025-08-12T02:58:28.000000Z\",\n                \"updated_at\": \"2025-08-12T02:58:28.000000Z\"\n            },\n            {\n                \"id\": \"a6b0c083-3c80-4780-96bc-dd01f9613a8a\",\n                \"name\": \"Andi Wijaya\",\n                \"role\": \"parent\",\n                \"phone_number\": \"081234567890\",\n                \"email\": \"andi@example.com\",\n                \"password\": \"$2y$12$S.EEHu/Hy0LsoCQGatWmi.7JlNScLDpfTSY2Mtvs.UIOcX/ezFu3m\",\n                \"created_at\": \"2025-08-12T02:58:28.000000Z\",\n                \"updated_at\": \"2025-08-12T02:58:28.000000Z\"\n            },\n            {\n                \"id\": \"dc4e3c6f-5312-416b-aa33-060998dcbb98\",\n                \"name\": \"Budi Santoso\",\n                \"role\": \"parent\",\n                \"phone_number\": \"081234567893anjing\",\n                \"email\": \"budianjinsialanbangsatbatakg@exdwadaample.com\",\n                \"password\": \"$2y$12$PZjDpVVlYzAr4ONcTl0IdOlNTmQaiFzVCkITq59YAaFIwXu.2D47u\",\n                \"created_at\": \"2025-08-12T02:59:39.000000Z\",\n                \"updated_at\": \"2025-08-12T02:59:39.000000Z\"\n            },\n            {\n                \"id\": \"eaf4f6bb-db60-49e0-9619-a081ba33b5a3\",\n                \"name\": \"Budi Santoso\",\n                \"role\": \"parent\",\n                \"phone_number\": \"081234567892\",\n                \"email\": \"budi@example.com\",\n                \"password\": \"$2y$12$ti4UI1YBwu4c3/PH4lXpGOBFG9oAt4HTJODzc9TZGbFqBIzekzI1e\",\n                \"created_at\": \"2025-08-12T02:58:28.000000Z\",\n                \"updated_at\": \"2025-08-12T02:58:28.000000Z\"\n            }\n        ],\n        \"first_page_url\": \"http://127.0.0.1:8000/api/users?page=1\",\n        \"from\": 1,\n        \"next_page_url\": null,\n        \"path\": \"http://127.0.0.1:8000/api/users\",\n        \"per_page\": 5,\n        \"prev_page_url\": null,\n        \"to\": 4\n    },\n    \"error\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "POST - Buat User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Budi Santoso\",\n  \"phone_number\": \"081234567893anjing\",\n  \"email\": \"budianjinsialanbangsatbatakg@exdwadaample.com\",\n  \"password\": \"jawanjidwadadanga\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "POST - Buat User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Budi Santoso\",\n  \"phone_number\": \"081234567893anjing\",\n  \"email\": \"budianjinsialanbangsatbatakg@exdwadaample.com\",\n  \"password\": \"jawanjidwadadanga\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.9"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 12 Aug 2025 02:59:39 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Orang tua berhasil dibuat\",\n    \"content\": {\n        \"name\": \"Budi Santoso\",\n        \"role\": \"parent\",\n        \"phone_number\": \"081234567893anjing\",\n        \"email\": \"budianjinsialanbangsatbatakg@exdwadaample.com\",\n        \"password\": \"$2y$12$PZjDpVVlYzAr4ONcTl0IdOlNTmQaiFzVCkITq59YAaFIwXu.2D47u\",\n        \"id\": \"dc4e3c6f-5312-416b-aa33-060998dcbb98\",\n        \"updated_at\": \"2025-08-12T02:59:39.000000Z\",\n        \"created_at\": \"2025-08-12T02:59:39.000000Z\"\n    },\n    \"error\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Budi Santoso\",\n  \"phone_number\": \"0876543229182\",\n  \"email\": \"budianjing@exdwadaample.com\",\n  \"password\": \"jawanjidwadadanga\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/dc4e3c6f-5312-416b-aa33-060998dcbb98",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"dc4e3c6f-5312-416b-aa33-060998dcbb98"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/users/dc4e3c6f-5312-416b-aa33-060998dcbb98",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"dc4e3c6f-5312-416b-aa33-060998dcbb98"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Students",
+			"item": [
+				{
+					"name": "GET - List Siswa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Siswa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Moreno Jawa\",\n  \"nisn\": \"1234567845\",\n  \"kelas\": \"X IPA 3\",\n  \"user_id\": \"eaf4f6bb-db60-49e0-9619-a081ba33b5a3\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Siswa Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Moreno Padang\",\n  \"nisn\": \"1234567845\",\n  \"kelas\": \"X IPA 5\",\n  \"user_id\": \"d777ca75-6e5e-44ce-9002-cedd25485388\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/students/d777ca75-6e5e-44ce-9002-cedd25485388",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"students",
+								"d777ca75-6e5e-44ce-9002-cedd25485388"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Siswa Copy 2",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/students/d777ca75-6e5e-44ce-9002-cedd25485388",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"students",
+								"d777ca75-6e5e-44ce-9002-cedd25485388"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Bills (Tagihan)",
+			"item": [
+				{
+					"name": "GET - List Tagihan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/bills",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tagihan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"month_year\": \"2024-09\",\n  \"due_date\": \"2024-08-10\",\n  \"amount\": 300000,\n  \"status\": \"unpaid\",\n  \"payment_categories_id\": \"82b23625-5d7f-4064-b1a3-141e4512f4c6\",\n  \"student_id\": \"69dabf75-5d45-4383-8ac3-9440366fdc75\",\n  \"academic_years_id\": \"ea5ab39b-5a93-4a53-9f28-16a4a56c917b\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/bills",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tagihan Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bill_number\": \"BILL-00001\",\n  \"month_year\": \"2024-09\",\n  \"due_date\": \"2024-08-10\",\n  \"amount\": 300000,\n  \"status\": \"unpaid\",\n  \"payment_categories_id\": \"82b23625-5d7f-4064-b1a3-141e4512f4c6\",\n  \"student_id\": \"69dabf75-5d45-4383-8ac3-9440366fdc75\",\n  \"academic_years_id\": \"ea5ab39b-5a93-4a53-9f28-16a4a56c917b\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/bills/431f209c-05ab-4793-8eb8-dbfa590f8624",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bills",
+								"431f209c-05ab-4793-8eb8-dbfa590f8624"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Tagihan Copy 2",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/bills/431f209c-05ab-4793-8eb8-dbfa590f8624",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bills",
+								"431f209c-05ab-4793-8eb8-dbfa590f8624"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Xendit - Invoice",
+			"item": [
+				{
+					"name": "POST - Buat Invoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/xendit/bills/{{bill_id}}/create-invoice",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"xendit",
+								"bills",
+								"{{bill_id}}",
+								"create-invoice"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Invoice Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/xendit/bills/{{bill_id}}/create-invoice",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"xendit",
+								"bills",
+								"{{bill_id}}",
+								"create-invoice"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Xendit Callback (Simulasi)",
+			"item": [
+				{
+					"name": "POST - Simulasi VA Dibayar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event\": \"virtual_account.paid\",\n  \"id\": \"va_123456789\",\n  \"external_id\": \"va-{{bill_id}}\",\n  \"amount\": 300000,\n  \"payment_id\": \"pay_123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/xendit/callback",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"xendit",
+								"callback"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Laporan Pembayaran",
+			"item": [
+				{
+					"name": "POST - Generate Laporan Harian",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2025-08-05\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reports/daily",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports",
+								"daily"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - List Laporan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "10. Notifikasi",
+			"item": [
+				{
+					"name": "GET - Notifikasi User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Buat Notifikasi Manual",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Pembayaran Berhasil\",\n  \"message\": \"Tagihan SPP telah dibayar.\",\n  \"type\": \"payment_success\",\n  \"user_id\": \"{{user_id}}\",\n  \"bill_id\": \"{{bill_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"andi@example.com\",\r\n    \"password\": \"password\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/signin",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "self",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"value": ""
+		},
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "default"
+		}
+	]
+}
