@@ -20,10 +20,8 @@ return new class extends Migration
             $table->string('customer_email', 100);
             $table->string('customer_phone', 15);
             $table->json('payment_methods')->nullable();
-            $table->uuid('bill_id');
             $table->timestamps();
-
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreignUuid('bill_id')->nullable()->constrained('bills')->cascadeOnDelete();
         });
     }
 

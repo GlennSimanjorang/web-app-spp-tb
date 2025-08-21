@@ -6,6 +6,7 @@ use App\Formatter;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class BillController extends Controller
 {
@@ -17,20 +18,37 @@ class BillController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'bill_number' => 'required|string|unique:bills',
-            'month_year' => 'nullable|string|max:7',
-            'due_date' => 'required|date',
-            'amount' => 'required|numeric',
-            'status' => 'required|in:unpaid,paid,overdue,cancelled',
-            'payment_categories_id' => 'required|string|exists:payment_categories,sqlid',
-            'student_id' => 'required|string|exists:students,sqlid',
-            'academic_years_id' => 'required|string|exists:academic_years,sqlid'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'month_year' => 'nullable|string|max:7',
+                'due_date' => 'required|date',
+                'amount' => 'required|numeric',
+                'status' => 'required|in:unpaid,paid,overdue,cancelled',
+                'payment_categories_id' => 'required|string|exists:payment_categories,id',
+                'student_id' => 'required|string|exists:students,id',
+                'academic_years_id' => 'required|string|exists:academic_years,id'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return Formatter::apiResponse(422, 'Validasi gagal', $validator->errors());
+        }
+
+        // Ambil bill terakhir
+        $lastBill = Bill::orderBy('bill_number', 'desc')->first();
+
+        if ($lastBill && preg_match('/BILL-(\d+)/', $lastBill->bill_number, $matches)) {
+            $nextNumber = (int)$matches[1] + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        $billNumber = 'BILL-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
 
         $bill = Bill::create([
-            'sqlid' => Str::uuid(),
-            'bill_number' => $request->bill_number,
+            'id' => Str::uuid(),
+            'bill_number' => $billNumber,
             'month_year' => $request->month_year,
             'due_date' => $request->due_date,
             'amount' => $request->amount,
@@ -42,6 +60,7 @@ class BillController extends Controller
 
         return Formatter::apiResponse(201, 'Tagihan dibuat', $bill);
     }
+
 
     public function show($id)
     {
@@ -64,14 +83,14 @@ class BillController extends Controller
         if (!$bill) return Formatter::apiResponse(404, 'Tidak ditemukan');
 
         $request->validate([
-            'bill_number' => 'string|unique:bills,bill_number,' . $id . ',sqlid',
+            'bill_number' => 'string|unique:bills,bill_number,' . $id . ',id',
             'month_year' => 'string|max:7',
             'due_date' => 'date',
             'amount' => 'numeric',
             'status' => 'in:unpaid,paid,overdue,cancelled',
-            'payment_categories_id' => 'exists:payment_categories,sqlid',
-            'student_id' => 'exists:students,sqlid',
-            'academic_years_id' => 'exists:academic_years,sqlid'
+            'payment_categories_id' => 'exists:payment_categories,id',
+            'student_id' => 'exists:students,id',
+            'academic_years_id' => 'exists:academic_years,id'
         ]);
 
         $bill->update($request->all());

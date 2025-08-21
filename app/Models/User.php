@@ -1,23 +1,16 @@
 <?php
 
 namespace App\Models;
-
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Model
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    use HasFactory, HasApiTokens;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -46,7 +39,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
-    
+
 
 
 }

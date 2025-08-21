@@ -16,14 +16,14 @@ return new class extends Migration
             $table->integer('total_transactions');
             $table->text('notes')->nullable();
             $table->json('report_data');
-            $table->uuid('academic_year_id')->nullable();
-            $table->uuid('payment_category_id')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();
 
-            $table->foreign('academic_year_id')->references('id')->on('academic_years');
-            $table->foreign('payment_category_id')->references('id')->on('payment_categories');
+            $table->foreignUuid('academic_year_id')->constrained('academic_years')->cascadeOnDelete();
+            $table->foreignUuid('payment_category_id')->constrained('payment_categories')->cascadeOnDelete();
+            
+            
         });
     }
 

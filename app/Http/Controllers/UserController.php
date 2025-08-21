@@ -6,19 +6,20 @@ use App\Formatter;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('role', 'parent')->get();
+        $users = User::where('role', 'parent')->simplePaginate(5);
         return Formatter::apiResponse(200, 'Daftar orang tua', $users);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'phone_number' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
@@ -26,7 +27,7 @@ class UserController extends Controller
         ]);
 
         $user = User::create([
-            'sqlid' => Str::uuid(),
+            'id' => Str::uuid(),    
             'name' => $request->name,
             'role' => 'parent',
             'phone_number' => $request->phone_number,
@@ -39,20 +40,20 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::where('sqlid', $id)->where('role', 'parent')->first();
+        $user = User::where('id', $id)->where('role', 'parent')->first();
         if (!$user) return Formatter::apiResponse(404, 'User tidak ditemukan');
         return Formatter::apiResponse(200, 'Detail user', $user);
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::where('sqlid', $id)->where('role', 'parent')->first();
+        $user = User::where('id', $id)->where('role', 'parent')->first();
         if (!$user) return Formatter::apiResponse(404, 'User tidak ditemukan');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'string|max:100',
-            'phone_number' => 'string|unique:users,phone_number,' . $user->sqlid . ',sqlid',
-            'email' => 'email|unique:users,email,' . $user->sqlid . ',sqlid',
+            'phone_number' => 'string|unique:users,phone_number,' . $user->id . ',id',
+            'email' => 'email|unique:users,email,' . $user->id . ',id',
             'password' => 'nullable|string|min:6'
         ]);
 
@@ -68,7 +69,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::where('sqlid', $id)->where('role', 'parent')->first();
+        $user = User::where('id', $id)->where('role', 'parent')->first();
         if (!$user) return Formatter::apiResponse(404, 'User tidak ditemukan');
 
         $user->delete();

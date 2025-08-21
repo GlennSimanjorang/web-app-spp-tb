@@ -6,6 +6,7 @@ use App\Formatter;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -17,15 +18,18 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(),[
             'name' => 'required|string|max:100',
             'nisn' => 'required|string|unique:students',
             'kelas' => 'required|string|max:10',
-            'user_id' => 'required|string|exists:users,sqlid'
+            'user_id' => 'required|string|exists:users,id'
         ]);
-
+        if ($validator->fails()) {
+            return Formatter::apiResponse(422, 'Validasi gagal', $validator->errors());
+        }
+        
         $student = Student::create([
-            'sqlid' => Str::uuid(),
+            'id' => Str::uuid(),
             'name' => $request->name,
             'nisn' => $request->nisn,
             'kelas' => $request->kelas,
@@ -47,16 +51,18 @@ class StudentController extends Controller
         $student = Student::find($id);
         if (!$student) return Formatter::apiResponse(404, 'Tidak ditemukan');
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'string|max:100',
-            'nisn' => 'string|unique:students,nisn,' . $id . ',sqlid',
+            'nisn' => 'string|unique:students,nisn,' . $id . ',id',
             'kelas' => 'string|max:10',
-            'user_id' => 'string|exists:users,sqlid'
+            'user_id' => 'string|exists:users,id'
         ]);
 
-        $student->update($request->only(['name', 'nisn', 'kelas', 'user_id']));
+        if ($validator->fails()) {
+            return Formatter::apiResponse(404, 'Validasi gagal', $validator->errors());
+        }
 
-        return Formatter::apiResponse(200, 'Siswa diperbarui', $student);
+        $student->update($request->only(['name', 'nisn', 'kelas', 'user_id']));
     }
 
     public function destroy($id)

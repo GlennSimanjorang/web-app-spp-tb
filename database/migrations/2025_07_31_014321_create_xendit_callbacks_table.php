@@ -17,10 +17,8 @@ return new class extends Migration
             $table->json('raw_data');
             $table->boolean('is_processed')->default(false);
             $table->timestamp('processed_at')->nullable();
-            $table->uuid('payment_id')->nullable();
+            $table->foreignUuid('payment_id')->constrained('payments')->cascadeOnDelete();
             $table->timestamps();
-
-            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('set null');
         });
     }
 

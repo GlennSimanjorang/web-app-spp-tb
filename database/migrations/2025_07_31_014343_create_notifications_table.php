@@ -20,12 +20,10 @@ return new class extends Migration
                 'invoice_created'
             ]);
             $table->boolean('is_read')->default(false);
-            $table->uuid('user_id');
-            $table->uuid('bill_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('bill_id')->nullable()->constrained('bills')->cascadeOnDelete();
         });
     }
 

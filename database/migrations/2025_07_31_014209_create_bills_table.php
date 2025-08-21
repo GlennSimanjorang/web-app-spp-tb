@@ -11,18 +11,15 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('bill_number', 50)->unique();
-            $table->string('month_year', 7)->nullable(); // YYYY-MM
+            $table->string('month_year', 7)->nullable(); 
             $table->date('due_date');
             $table->decimal('amount', 15, 2);
             $table->enum('status', ['unpaid', 'paid', 'overdue', 'cancelled'])->default('unpaid');
-            $table->uuid('payment_categories_id');
-            $table->uuid('student_id');
-            $table->uuid('academic_years_id');
-            $table->timestamps();
+            $table->foreignUuid('payment_categories_id')->constrained('payment_categories')->cascadeOnDelete();
+            $table->foreignUuid('student_id')->constrained('students')->cascadeOnDelete();
+            $table->foreignUuid('academic_years_id')->constrained('academic_years')->cascadeOnDelete();
 
-            $table->foreign('payment_categories_id')->references('id')->on('payment_categories');
-            $table->foreign('student_id')->references('id')->on('students');
-            $table->foreign('academic_years_id')->references('id')->on('academic_years');
+            $table->timestamps();
         });
     }
 
