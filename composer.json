@@ -3,43 +3,27 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-<<<<<<< HEAD
-    "keywords": ["laravel", "framework"],
-=======
     "keywords": [
         "laravel",
         "framework"
     ],
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
-<<<<<<< HEAD
-        "laravel/tinker": "^2.10.1"
-=======
         "laravel/tinker": "^2.10.1",
         "midtrans/midtrans-php": "^2.6"
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
-<<<<<<< HEAD
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.41",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
-=======
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0"
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     },
     "autoload": {
         "psr-4": {
@@ -71,15 +55,6 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-<<<<<<< HEAD
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
-        ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "12.x-dev"
-        },
-=======
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
         ],
         "test": [
@@ -88,7 +63,9 @@
         ]
     },
     "extra": {
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
+        "branch-alias": {
+            "dev-master": "12.x-dev"
+        },
         "laravel": {
             "dont-discover": []
         }
@@ -102,10 +79,6 @@
             "php-http/discovery": true
         }
     },
-<<<<<<< HEAD
-    "minimum-stability": "dev",
-=======
     "minimum-stability": "stable",
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     "prefer-stable": true
 }
