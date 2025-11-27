@@ -1,4 +1,21 @@
+<<<<<<< HEAD
 /.phpunit.cache
+=======
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+>>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
 /node_modules
 /public/build
 /public/hot
@@ -6,6 +23,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+<<<<<<< HEAD
 .env
 .env.backup
 .env.production
@@ -21,3 +39,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+=======
+Homestead.json
+Homestead.yaml
+Thumbs.db
+>>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572

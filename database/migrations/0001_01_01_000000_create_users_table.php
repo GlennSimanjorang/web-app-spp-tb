@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+<<<<<<< HEAD
     /**
      * Run the migrations.
      */
@@ -45,5 +46,22 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+=======
+    public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id('id')->primary();
+            $table->string('name');
+            $table->enum('role', ['admin', 'parents']);
+            $table->string('email')->unique();
+            $table->text('password');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('users');
+>>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     }
 };

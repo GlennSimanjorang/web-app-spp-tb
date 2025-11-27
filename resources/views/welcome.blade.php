@@ -4,7 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<<<<<<< HEAD
         <title>Laravel</title>
+=======
+        <title>{{ config('app.name', 'Laravel') }}</title>
+>>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

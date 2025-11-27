@@ -1,0 +1,590 @@
+{
+    "info": {
+        "_postman_id": "school-payment-api-role-based",
+        "name": "School Payment API - Role Based",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "🔐 Auth",
+            "item": [
+                {
+                    "name": "Login as Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@sekolah.com\",\n  \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/signin",
+                            "host": ["{{base_url}}"],
+                            "path": ["signin"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const responseJson = pm.response.json();",
+                                    "if (responseJson.data && responseJson.data.token) {",
+                                    "    pm.environment.set(\"token\", responseJson.data.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login as Parent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"budi@ortu.com\",\n  \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/signin",
+                            "host": ["{{base_url}}"],
+                            "path": ["signin"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const responseJson = pm.response.json();",
+                                    "if (responseJson.data && responseJson.data.token) {",
+                                    "    pm.environment.set(\"token\", responseJson.data.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get My Profile (/self)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/self",
+                            "host": ["{{base_url}}"],
+                            "path": ["self"]
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/signout",
+                            "host": ["{{base_url}}"],
+                            "path": ["signout"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👨‍💼 ADMIN ONLY",
+            "item": [
+                {
+                    "name": "Academic Years",
+                    "item": [
+                        {
+                            "name": "List Academic Years",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/academic-years",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["academic-years"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Academic Year",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"school_years\": \"2025/2026\",\n  \"start_date\": \"2025-07-01\",\n  \"end_date\": \"2026-06-30\",\n  \"is_active\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/academic-years",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["academic-years"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Payment Categories",
+                    "item": [
+                        {
+                            "name": "List Categories",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/payment-categories",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["payment-categories"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Category",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"SPP Bulanan\",\n  \"amount\": 500000,\n  \"frequency\": \"month\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/payment-categories",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["payment-categories"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Students",
+                    "item": [
+                        {
+                            "name": "List Students",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/students",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["students"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Student",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Andi Pratama\",\n  \"nisn\": \"1234567890\",\n  \"kelas\": \"XII IPA 1\",\n  \"user_id\": 2\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/students",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["students"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Bills",
+                    "item": [
+                        {
+                            "name": "List Bills",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/bills",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["bills"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Bill",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"bill_number\": \"TAG-2024-001\",\n  \"month_year\": \"Agustus 2024\",\n  \"due_date\": \"2024-08-10\",\n  \"amount\": 500000,\n  \"payment_categories_id\": 1,\n  \"student_id\": 1,\n  \"academic_years_id\": 1\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/bills",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["bills"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Notifications (Admin)",
+                    "item": [
+                        {
+                            "name": "Create Notification",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"title\": \"Pengumuman Penting\",\n  \"message\": \"Libur nasional besok.\",\n  \"type\": \"general\",\n  \"user_id\": 2\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/notifications",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["notifications"]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "👩‍👧 PARENTS ONLY",
+            "item": [
+                {
+                    "name": "Bills (My Child)",
+                    "item": [
+                        {
+                            "name": "List My Bills",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/bills",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["bills"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "View Bill Detail",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/bills/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["bills", "1"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Payments (Pay Bill)",
+                    "item": [
+                        {
+                            "name": "Pay with Cash/Transfer",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"payment_method\": \"cash\",\n  \"amount_paid\": 500000,\n  \"payment_date\": \"2024-08-10\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/payments/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["payments", "1"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Midtrans Transaction",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"amount_paid\": 500000\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/payments/midtrans/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["payments", "midtrans", "1"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Notifications",
+                    "item": [
+                        {
+                            "name": "List My Notifications",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/notifications",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["notifications"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Mark as Read",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/notifications/1/read",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["notifications", "1", "read"]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Mark All as Read",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/notifications/read-all",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["notifications", "read-all"]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Due Date Alerts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/due-date-alerts",
+                            "host": ["{{base_url}}"],
+                            "path": ["due-date-alerts"]
+                        }
+                    }
+                },
+                {
+                    "name": "Payment Reports",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-reports",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-reports"]
+                        }
+                    }
+                },
+                {
+                    "name": "My Student Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/students/my-students",
+                            "host": ["{{base_url}}"],
+                            "path": ["students", "my-students"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🌐 Webhooks & External",
+            "item": [
+                {
+                    "name": "Midtrans Webhook (Simulasi)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"order_id\": \"PAY-1-123456\",\n  \"transaction_status\": \"settlement\",\n  \"payment_type\": \"bank_transfer\",\n  \"va_numbers\": [{\"va_number\": \"888123456789\"}],\n  \"fraud_status\": \"accept\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payments/webhook",
+                            "host": ["{{base_url}}"],
+                            "path": ["payments", "webhook"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api"
+        },
+        {
+            "key": "token",
+            "value": ""
+        }
+    ]
+}
