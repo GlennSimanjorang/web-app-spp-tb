@@ -22,7 +22,8 @@ class Bill extends Model
 
     protected $casts = [
         'due_date' => 'date',
-        'total_paid' => 'decimal:2',
+        'total_paid' => 'float',
+        'amount' => 'float',
     ];
 
     // Relasi

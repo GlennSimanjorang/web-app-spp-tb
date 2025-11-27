@@ -17,7 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             "token-check" => \App\Http\Middleware\TokenCheck::class,
-            "role" => \App\Http\Middleware\RolePermission::class
+            "role" => \App\Http\Middleware\RolePermission::class,
+            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+            'sanctum' => \Laravel\Sanctum\Http\Middleware\Authenticate::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

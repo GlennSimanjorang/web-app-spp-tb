@@ -16,21 +16,33 @@ class RolePermission
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
-    {
-        $currentUser = Auth::guard('sanctum')->user();
+{
+    $currentUser = Auth::guard('sanctum')->user();
 
-        if (!$currentUser) {
-            return Formatter::apiResponse(401, "Unauthorized. Please login first.");
-        }
-
-        $userRole = $currentUser->role;
-
-        if (is_null($userRole) || !in_array($userRole, $roles)) {
-            return Formatter::apiResponse(403, "You are not authorized to access this page.");
-        }
-
-        $request->merge(["user" => $currentUser]);
-
-        return $next($request);
+    if (!$currentUser) {
+        // 🛑 Ganti Formatter::apiResponse dengan response()
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized. Please login first.',
+            'data' => null
+        ], 401); 
     }
+
+    $userRole = $currentUser->role;
+    // 🛑 Tambahkan strtolower untuk memastikan perbandingan Case-Insensitive
+    $rolesAllowed = array_map('strtolower', $roles); // Agar perbandingan toleran
+
+    if (is_null($userRole) || !in_array(strtolower($userRole), $rolesAllowed)) {
+        // 🛑 Ganti Formatter::apiResponse dengan response()
+        return response()->json([
+            'success' => false,
+            'message' => 'You are not authorized to access this page.',
+            'data' => null
+        ], 403); 
+    }
+
+    $request->merge(["user" => $currentUser]);
+
+    return $next($request);
+}
 }

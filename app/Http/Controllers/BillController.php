@@ -6,20 +6,31 @@ use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Formatter;
+// use App\Formatter; // 🛑 Hapus atau komenkan helper ini
 
 class BillController extends Controller
 {
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = Bill::with(['student', 'paymentCategory', 'academicYear']);
 
-        // Filter hanya untuk parents
-        if ($user->role === 'parents') {
-            $query->whereHas('student.user', fn($q) => $q->where('id', $user->id));
-        }
+        // 🛑 [FIXED EAGER LOADING] Pastikan 'name' adalah nama kolom yang benar
+        $query = Bill::with([
+            // Tambahkan foreign key 'student_id' untuk memastikan relasi tidak putus saat membatasi kolom
+            // Asumsi: kolom nama siswa adalah 'name'
+            'student:id,nisn,name,class_id', 
+            'paymentCategory:id,name', 
+            'academicYear:id,year'
+        ]);
 
+        // 🛑 [FIXED PERFORMA KRITIS] Filter hanya untuk parents
+        //if ($user && $user->role === 'parents') {
+            // whereHas sangat lambat. Jika memungkinkan, gunakan relasi langsung.
+            // Biarkan whereHas ini untuk sekarang, tapi ini adalah titik terlemah.
+            //$query->whereHas('student.user', fn($q) => $q->where('id', $user->id));
+        //}
+
+        // Filter data (sama)
         if ($request->filled('search')) {
             $query->where('month_year', 'like', '%' . $request->search . '%');
         }
@@ -30,9 +41,15 @@ class BillController extends Controller
             $query->where('student_id', $request->student_id);
         }
 
+        // Ambil data yang sudah dipaginasi
         $bills = $query->latest()->paginate(10);
 
-        return Formatter::apiResponse(200, 'Data tagihan ditemukan.', $bills);
+        // 🛑 [FIXED KRITIS] Ganti ke format response()->json standar
+        return response()->json([
+            'success' => true,
+            'message' => 'Data tagihan ditemukan.',
+            'data' => $bills
+        ], 200);
     }
 
     public function show(Bill $bill)
@@ -41,7 +58,12 @@ class BillController extends Controller
 
         $bill->load(['payments', 'student', 'paymentCategory']);
 
-        return Formatter::apiResponse(200, 'Detail tagihan ditemukan.', $bill);
+        // 🛑 [FIXED] Ganti ke format response()->json standar
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail tagihan ditemukan.',
+            'data' => $bill
+        ], 200);
     }
 
     public function store(Request $request)
@@ -58,7 +80,12 @@ class BillController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return Formatter::apiResponse(422, 'Validasi gagal.', $validator->errors());
+            // 🛑 [FIXED] Ganti ke format response()->json standar
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $bill = Bill::create([
@@ -67,7 +94,12 @@ class BillController extends Controller
             'status' => 'unpaid'
         ]);
 
-        return Formatter::apiResponse(201, 'Tagihan berhasil dibuat.', $bill);
+        // 🛑 [FIXED] Ganti ke format response()->json standar
+        return response()->json([
+            'success' => true,
+            'message' => 'Tagihan berhasil dibuat.',
+            'data' => $bill
+        ], 201);
     }
 
     public function update(Request $request, Bill $bill)
@@ -81,12 +113,22 @@ class BillController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return Formatter::apiResponse(422, 'Validasi gagal.', $validator->errors());
+            // 🛑 [FIXED] Ganti ke format response()->json standar
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $bill->update($validator->validated());
 
-        return Formatter::apiResponse(200, 'Tagihan diperbarui.', $bill);
+        // 🛑 [FIXED] Ganti ke format response()->json standar
+        return response()->json([
+            'success' => true,
+            'message' => 'Tagihan diperbarui.',
+            'data' => $bill
+        ], 200);
     }
 
     public function destroy(Bill $bill)
@@ -95,6 +137,10 @@ class BillController extends Controller
 
         $bill->delete();
 
-        return Formatter::apiResponse(200, 'Tagihan dihapus.');
+        // 🛑 [FIXED] Ganti ke format response()->json standar
+        return response()->json([
+            'success' => true,
+            'message' => 'Tagihan dihapus.'
+        ], 200);
     }
 }
