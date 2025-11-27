@@ -33,6 +33,7 @@ class PaymentController extends Controller
             'payment_method' => 'required|in:cash,transfer,virtual_account',
             'amount_paid' => 'required|numeric|min:1|max:' . ($bill->amount - $bill->total_paid + 1),
             'payment_date' => 'required|date',
+            'notes' => 'nullable|string|max:1000', 
         ]);
 
         if ($validator->fails()) {
@@ -46,15 +47,13 @@ class PaymentController extends Controller
 
         try {
             DB::beginTransaction();
-
-            $payment = Payment::create($data);
+            $payment = Payment::create($data); // notes otomatis disimpan jika ada
 
             if ($payment->status === 'success') {
                 $this->updateBillStatus($bill);
             }
 
             DB::commit();
-
             return Formatter::apiResponse(201, 'Pembayaran berhasil dicatat.', $payment);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -62,6 +61,8 @@ class PaymentController extends Controller
             return Formatter::apiResponse(500, 'Gagal menyimpan pembayaran.');
         }
     }
+
+    
 
     /**
      * Buat transaksi Midtrans (SNAP)
@@ -252,5 +253,45 @@ class PaymentController extends Controller
                 $bill->update(['status' => 'overdue']);
             }
         }
+    }
+
+    public function history(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = Payment::with([
+            'bill.student:id,name,nisn,kelas,user_id',
+            'bill.paymentCategory:id,name'
+        ])
+            ->where('status', 'success')
+            ->latest();
+
+        // 🔒 Filter untuk parents
+        if ($user->role === 'parents') {
+            $query->whereHas('bill.student', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
+        // Filter tanggal opsional
+        if ($request->filled('from') && $request->filled('to')) {
+            $validator = Validator::make($request->all(), [
+                'from' => 'date',
+                'to' => 'date|after_or_equal:from',
+            ]);
+            if ($validator->fails()) {
+                return Formatter::apiResponse(422, 'Validasi tanggal gagal', $validator->errors());
+            }
+            $query->whereBetween('payment_date', [$request->from, $request->to]);
+        }
+
+        // Filter per siswa (opsional, untuk admin/parents)
+        if ($request->filled('student_id')) {
+            $query->whereHas('bill', fn($q) => $q->where('student_id', $request->student_id));
+        }
+
+        $payments = $query->paginate(15);
+
+        return Formatter::apiResponse(200, 'Riwayat pembayaran', $payments);
     }
 }

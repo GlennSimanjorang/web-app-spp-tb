@@ -9,8 +9,8 @@ use App\Http\Controllers\DueDateAlertController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentCategoryController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PaymentReportController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UserController;
 
 // 🔓 Public Route: Login
 Route::post('signin', [AuthController::class, 'signIn'])->name('signin');
@@ -27,19 +27,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Academic Years
         Route::apiResource('academic-years', AcademicYearController::class);
 
+        Route::apiResource('users', UserController::class);
+
         // Payment Categories
         Route::apiResource('payment-categories', PaymentCategoryController::class);
 
         // Students
         Route::apiResource('students', StudentController::class);
 
+        Route::apiResource('bills', BillController::class);
 
         // Payments (Admin bisa buat manual atau proses Midtrans)
         Route::post('payments/{bill}', [PaymentController::class, 'store']);
         Route::post('payments/midtrans/{bill}', [PaymentController::class, 'createMidtransTransaction']);
 
         // Payment Reports
-        Route::apiResource('payment-reports', PaymentReportController::class);
+        Route::post('bills/generate-monthly', [BillController::class, 'generateMonthlyBills']);
 
         // Due Date Alerts (Admin lihat semua)
         Route::apiResource('due-date-alerts', DueDateAlertController::class);
@@ -63,7 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
 
-        Route::resource('payment-reports', PaymentReportController::class);
+        
 
         Route::get('students/my-students', [StudentController::class, 'myStudents']);
         Route::get('students/{id}', [StudentController::class, 'show'])
@@ -74,6 +77,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['role:admin,parents'])->group(function () {
         Route::get('bills', [BillController::class, 'index']);
         Route::get('bills/{bill}', [BillController::class, 'show']);
+        Route::get('/payment-history', [PaymentController::class, 'history']);
+        
     });
 });
 

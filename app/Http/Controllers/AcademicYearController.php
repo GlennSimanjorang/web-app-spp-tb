@@ -19,7 +19,7 @@ class AcademicYearController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'school_year' => 'required|string|max:9',
+            'school_years' => 'required|string|max:9',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'is_active' => 'boolean'
@@ -27,7 +27,7 @@ class AcademicYearController extends Controller
 
         $year = AcademicYear::create([
             'id' => Str::uuid(),
-            'school_year' => $request->school_year,
+            'school_years' => $request->school_years,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'is_active' => $request->is_active ?? false,
@@ -49,13 +49,13 @@ class AcademicYearController extends Controller
         if (!$year) return Formatter::apiResponse(404, 'Tidak ditemukan');
 
         $request->validate([
-            'school_year' => 'string|max:9',
+            'school_years' => 'string|max:9',
             'start_date' => 'date',
             'end_date' => 'date|after:start_date',
             'is_active' => 'boolean'
         ]);
 
-        $year->update($request->only(['school_year', 'start_date', 'end_date', 'is_active']));
+        $year->update($request->only(['school_years', 'start_date', 'end_date', 'is_active']));
 
         return Formatter::apiResponse(200, 'Tahun ajaran diperbarui', $year);
     }

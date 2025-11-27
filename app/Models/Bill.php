@@ -50,9 +50,4 @@ class Bill extends Model
     {
         return $this->hasMany(DueDateAlert::class);
     }
-
-    public function paymentReports()
-    {
-        return $this->hasMany(PaymentReport::class);
-    }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Helpers\Formatter; // pastikan helper Formatter dipakai
+use App\Formatter; // pastikan helper Formatter dipakai
 
 class PaymentCategoryController extends Controller
 {
