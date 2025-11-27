@@ -2,16 +2,11 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-<<<<<<< HEAD
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../**/*.vue";
-=======
 @source '../**/*.blade.php';
 @source '../**/*.js';
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
+@source '../**/*.vue';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
