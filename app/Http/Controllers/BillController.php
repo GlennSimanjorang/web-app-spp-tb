@@ -214,6 +214,8 @@ class BillController extends Controller
         return Formatter::apiResponse(200, 'Tagihan diperbarui.', $bill);
     }
 
+    
+
     public function destroy(Bill $bill)
     {
         $this->authorize('delete', $bill);

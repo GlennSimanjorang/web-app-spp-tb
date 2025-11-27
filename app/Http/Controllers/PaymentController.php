@@ -13,7 +13,8 @@ use Midtrans\Config;
 use Midtrans\Snap;
 use App\Formatter;
 use Midtrans\Notification;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\View;
 class PaymentController extends Controller
 {
     public function __construct()
@@ -33,7 +34,7 @@ class PaymentController extends Controller
             'payment_method' => 'required|in:cash,transfer,virtual_account',
             'amount_paid' => 'required|numeric|min:1|max:' . ($bill->amount - $bill->total_paid + 1),
             'payment_date' => 'required|date',
-            'notes' => 'nullable|string|max:1000', 
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +63,7 @@ class PaymentController extends Controller
         }
     }
 
-    
+
 
     /**
      * Buat transaksi Midtrans (SNAP)
@@ -244,14 +245,60 @@ class PaymentController extends Controller
         $totalPaid = $bill->payments()->where('status', 'success')->sum('amount_paid');
         $bill->update(['total_paid' => $totalPaid]);
 
-        if ($totalPaid >= $bill->amount) {
+        $wasUnpaid = $bill->status !== 'paid';
+        $isNowPaid = $totalPaid >= $bill->amount;
+
+        if ($isNowPaid) {
             $bill->update(['status' => 'paid']);
+
+            // 🔥 Kirim notifikasi & email hanya jika benar-benar baru lunas
+            if ($wasUnpaid && $bill->student?->user_id) {
+                // Simpan notifikasi ke database
+                \App\Models\Notification::create([
+                    'id' => \Illuminate\Support\Str::uuid(),
+                    'title' => 'Pembayaran Berhasil',
+                    'message' => "Pembayaran tagihan '{$bill->month_year}' sebesar Rp" . number_format($bill->amount, 0, ',', '.') . " telah lunas.",
+                    'type' => 'payment_success',
+                    'is_read' => false,
+                    'user_id' => $bill->student->user_id,
+                    'bill_id' => $bill->id,
+                ]);
+                \Log::info('Mencoba kirim email untuk bill', ['bill_id' => $bill->id]);
+                $this->sendPaymentSuccessEmail($bill);
+                // 🔥 Kirim email
+                $this->sendPaymentSuccessEmail($bill);
+            }
         } elseif ($totalPaid > 0) {
             $bill->update(['status' => 'partial']);
         } else {
             if ($bill->due_date < today()) {
                 $bill->update(['status' => 'overdue']);
             }
+        }
+    }
+
+    private function sendPaymentSuccessEmail($bill)
+    {
+        $user = $bill->student?->user;
+        if (!$user || !filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        try {
+            $html = View::make('emails.payment_success', [
+                'studentName' => $bill->student->name,
+                'monthYear'   => $bill->month_year,
+                'amount'      => $bill->amount,
+            ])->render();
+
+            Mail::html($html, function ($message) use ($user, $bill) {
+                $message->to($user->email)
+                    ->subject('✅ Pembayaran Berhasil - ' . $bill->month_year);
+            });
+
+            \Log::info('Email pembayaran sukses terkirim ke: ' . $user->email);
+        } catch (\Exception $e) {
+            \Log::warning('Gagal kirim email', ['error' => $e->getMessage()]);
         }
     }
 
