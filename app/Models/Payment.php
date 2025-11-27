@@ -31,6 +31,13 @@ class Payment extends Model
         'midtrans_raw_response' => 'array', // JSON otomatis jadi array
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::observe(\App\Observers\PaymentObserver::class);
+    }
+
     // Relasi
     public function bill()
     {

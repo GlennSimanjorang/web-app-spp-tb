@@ -7,6 +7,9 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class StudentController extends Controller
 {
@@ -16,15 +19,42 @@ class StudentController extends Controller
         return Formatter::apiResponse(200, 'Daftar siswa', $students);
     }
 
-    public function myStudents(Request $request)
+    public function myStudents()
     {
-        $user = $request->user();
+        \Log::info('🔍 myStudents accessed', [
+            'auth_id' => Auth::id(),
+            'user' => Auth::user()?->toArray(), // Log seluruh user
+            'role_type' => gettype(Auth::user()?->role),
+            'role_length' => strlen(Auth::user()?->role),
+            'role_debug' => '"' . Auth::user()?->role . '"', // Lihat spasi?
+        ]);
 
-        $students = Student::whereHas('parents', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->with(['user', 'academicYear', 'payments.bill'])->get();
+        $user = Auth::user();
 
-        return Formatter::apiResponse(200, 'Data siswa Anda', $students);
+        if (!$user) {
+            \Log::warning('🚫 Unauthorized: no user authenticated');
+            return Formatter::apiResponse(401, 'Unauthorized');
+        }
+
+        if ($user->role !== 'parents') {
+            \Log::warning('🚫 Access denied: wrong role', [
+                'given_role' => $user->role,
+                'expected' => 'parents',
+                'roles_match' => $user->role === 'parents' ? 'yes' : 'no'
+            ]);
+            return Formatter::apiResponse(403, 'You are not authorized to access this page.');
+        }
+
+        $students = Student::where('user_id', $user->id)->get();
+
+        if ($students->isEmpty()) {
+            \Log::info('📭 No students found for user', ['user_id' => $user->id]);
+            return Formatter::apiResponse(404, 'Anda belum memiliki siswa terdaftar.');
+        }
+
+        \Log::info('✅ Success: returning students', ['count' => $students->count()]);
+
+        return Formatter::apiResponse(200, 'Daftar siswa Anda', $students);
     }
 
     public function store(Request $request)

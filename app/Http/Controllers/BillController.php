@@ -15,6 +15,7 @@ class BillController extends Controller
         $user = Auth::user();
         $query = Bill::with(['student', 'paymentCategory', 'academicYear']);
 
+        // Filter hanya untuk parents
         if ($user->role === 'parents') {
             $query->whereHas('student.user', fn($q) => $q->where('id', $user->id));
         }

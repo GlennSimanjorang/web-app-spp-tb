@@ -33,8 +33,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Students
         Route::apiResource('students', StudentController::class);
 
-        // Bills
-        Route::apiResource('bills', BillController::class);
 
         // Payments (Admin bisa buat manual atau proses Midtrans)
         Route::post('payments/{bill}', [PaymentController::class, 'store']);
@@ -53,8 +51,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // 👩‍👧 Rute untuk PARENTS
     Route::middleware(['role:parents'])->group(function () {
-        Route::get('bills', [BillController::class, 'index']);
-        Route::get('bills/{bill}', [BillController::class, 'show']);
 
         // Bayar tagihan
         Route::post('payments/{bill}', [PaymentController::class, 'store']);
@@ -67,11 +63,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
 
-        Route::get('payment-reports', [PaymentReportController::class, 'index']);
+        Route::resource('payment-reports', PaymentReportController::class);
 
         Route::get('students/my-students', [StudentController::class, 'myStudents']);
         Route::get('students/{id}', [StudentController::class, 'show'])
             ->where('id', '[0-9]+'); // hanya ID valid
+    });
+
+    // Satu route untuk semua role yang diizinkan
+    Route::middleware(['role:admin,parents'])->group(function () {
+        Route::get('bills', [BillController::class, 'index']);
+        Route::get('bills/{bill}', [BillController::class, 'show']);
     });
 });
 
