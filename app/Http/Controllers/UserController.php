@@ -11,9 +11,6 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    /**
-     * Tampilkan semua user (hanya admin)
-     */
     public function index(Request $request)
     {
         $query = User::select('id', 'name', 'email', 'role', 'number', 'created_at');
@@ -29,25 +26,17 @@ class UserController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->paginate(15);
-
-        return Formatter::apiResponse(200, 'Daftar pengguna', $users);
+        return Formatter::apiResponse(200, 'Daftar pengguna', $query->paginate(15));
     }
 
-    /**
-     * Buat user baru (hanya admin)
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'role' => ['required', Rule::in(['admin', 'parents'])],
-            'number' => 'nullable|string|max:20',
+            'name'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
+            'role'     => ['required', Rule::in(['admin', 'parents'])],
+            'number'   => 'nullable|string|max:20',
             'password' => 'required|string|min:6|confirmed',
-        ], [
-            'role.in' => 'Role harus admin atau parents.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         if ($validator->fails()) {
@@ -55,22 +44,18 @@ class UserController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-            'number' => $request->number,
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'role'     => $request->role,
+            'number'   => $request->number,
             'password' => Hash::make($request->password),
         ]);
 
-        // Sembunyikan password di response
-        $user->makeHidden(['password', 'remember_token']);
+        $user->makeHidden(['password']);
 
         return Formatter::apiResponse(201, 'Pengguna berhasil dibuat.', $user);
     }
 
-    /**
-     * Tampilkan detail user (hanya admin)
-     */
     public function show($id)
     {
         $user = User::select('id', 'name', 'email', 'role', 'number', 'created_at', 'updated_at')
@@ -83,9 +68,6 @@ class UserController extends Controller
         return Formatter::apiResponse(200, 'Detail pengguna', $user);
     }
 
-    /**
-     * Update user (hanya admin)
-     */
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -94,19 +76,11 @@ class UserController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:100',
-            'email' => [
-                'sometimes',
-                'required',
-                'email',
-                Rule::unique('users')->ignore($id),
-            ],
-            'role' => ['sometimes', 'required', Rule::in(['admin', 'parents'])],
-            'number' => 'nullable|string|max:20',
+            'name'     => 'sometimes|required|string|max:100',
+            'email'    => ['sometimes','required','email', Rule::unique('users')->ignore($id)],
+            'role'     => ['sometimes','required', Rule::in(['admin', 'parents'])],
+            'number'   => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
-        ], [
-            'role.in' => 'Role harus admin atau parents.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         if ($validator->fails()) {
@@ -115,21 +89,16 @@ class UserController extends Controller
 
         $data = $request->only(['name', 'email', 'role', 'number']);
 
-        // Jika password diisi, hash dan update
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);
-
-        $user->makeHidden(['password', 'remember_token']);
+        $user->makeHidden(['password']);
 
         return Formatter::apiResponse(200, 'Pengguna berhasil diperbarui.', $user);
     }
 
-    /**
-     * Hapus user (hanya admin)
-     */
     public function destroy($id)
     {
         $user = User::find($id);

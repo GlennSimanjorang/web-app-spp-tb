@@ -66,8 +66,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
 
-        
-
         Route::get('students/my-students', [StudentController::class, 'myStudents']);
         Route::get('students/{id}', [StudentController::class, 'show'])
             ->where('id', '[0-9]+'); // hanya ID valid
@@ -79,7 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('bills/{bill}', [BillController::class, 'show']);
         Route::get('/payment-history', [PaymentController::class, 'history']);
         
-    });
+    }); 
 });
 
 

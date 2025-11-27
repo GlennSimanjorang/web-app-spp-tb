@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('role', ['admin', 'parents']);
             $table->string('email')->unique();
+            $table->string('number')->nullable(); // <= Tambahkan
             $table->text('password');
             $table->timestamps();
         });
