@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::select('id', 'name', 'email', 'role', 'number', 'created_at');
+        $query = User::select('id', 'name', 'email', 'role',  'created_at');
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -43,7 +43,6 @@ class UserController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
             'role' => ['required', Rule::in(['admin', 'parents'])],
-            'number' => 'nullable|string|max:20',
             'password' => 'required|string|min:6|confirmed',
         ], [
             'role.in' => 'Role harus admin atau parents.',
@@ -58,7 +57,6 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'number' => $request->number,
             'password' => Hash::make($request->password),
         ]);
 
@@ -73,7 +71,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::select('id', 'name', 'email', 'role', 'number', 'created_at', 'updated_at')
+        $user = User::select('id', 'name', 'email', 'role', 'created_at', 'updated_at')
             ->find($id);
 
         if (!$user) {
@@ -102,7 +100,6 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($id),
             ],
             'role' => ['sometimes', 'required', Rule::in(['admin', 'parents'])],
-            'number' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
         ], [
             'role.in' => 'Role harus admin atau parents.',
@@ -113,7 +110,7 @@ class UserController extends Controller
             return Formatter::apiResponse(422, 'Validasi gagal', $validator->errors());
         }
 
-        $data = $request->only(['name', 'email', 'role', 'number']);
+        $data = $request->only(['name', 'email', 'role']);
 
         // Jika password diisi, hash dan update
         if ($request->filled('password')) {
