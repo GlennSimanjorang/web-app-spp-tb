@@ -24,7 +24,7 @@ class AcademicYearController extends Controller
             'end_date' => 'required|date|after:start_date',
             'is_active' => 'boolean'
         ]);
-
+        
         $year = AcademicYear::create([
             'id' => Str::uuid(),
             'school_years' => $request->school_years,
