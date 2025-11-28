@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Formatter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\DueDateAlert;
 
 class BillController extends Controller
 {
@@ -110,6 +111,21 @@ class BillController extends Controller
             'status' => 'unpaid',
         ]);
 
+        DueDateAlert::create([
+            'bill_id' => $bill->id,
+            'alert_date' => $bill->due_date,
+            'alert_type' => 'due',
+            'is_processed' => false,
+        ]);
+
+        // Buat alert pengingat 3 hari sebelumnya
+        DueDateAlert::create([
+            'bill_id' => $bill->id,
+            'alert_date' => \Carbon\Carbon::parse($bill->due_date)->subDays(3),
+            'alert_type' => 'upcoming',
+            'is_processed' => false,
+        ]);
+
         return Formatter::apiResponse(201, 'Tagihan berhasil dibuat.', $bill);
     }
 
@@ -176,6 +192,21 @@ class BillController extends Controller
                     'amount' => $category->amount,
                     'total_paid' => 0,
                     'status' => 'unpaid',
+                ]);
+
+                DueDateAlert::create([
+                    'bill_id' => $bill->id,
+                    'alert_date' => $dueDate,
+                    'alert_type' => 'due',
+                    'is_processed' => false,
+                ]);
+
+                // Alert pengingat 3 hari sebelum
+                DueDateAlert::create([
+                    'bill_id' => $bill->id,
+                    'alert_date' => $dueDate->copy()->subDays(3),
+                    'alert_type' => 'upcoming',
+                    'is_processed' => false,
                 ]);
 
                 $createdBills[] = $bill;
