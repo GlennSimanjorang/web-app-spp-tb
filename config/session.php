@@ -102,11 +102,7 @@ return [
     | define the cache store which should be used to store the session data
     | between requests. This must match one of your defined cache stores.
     |
-<<<<<<< HEAD
-    | Affects: "apc", "dynamodb", "memcached", "redis"
-=======
     | Affects: "dynamodb", "memcached", "redis"
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     |
     */
 
@@ -138,11 +134,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-<<<<<<< HEAD
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
-=======
         Str::slug(env('APP_NAME', 'laravel')).'-session'
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     ),
 
     /*

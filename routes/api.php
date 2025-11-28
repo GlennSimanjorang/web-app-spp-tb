@@ -2,12 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-=======
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\BillController;
@@ -89,4 +83,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572

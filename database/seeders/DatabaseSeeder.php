@@ -2,25 +2,6 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-=======
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -212,6 +193,5 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('✅ Database seeder berhasil dijalankan!');
->>>>>>> 48ceca89c80cd3cb95c2541bb2833327718bb572
     }
 }
