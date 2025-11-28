@@ -14,6 +14,7 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('email')->unique();
                 $table->string('number');
+                $table->string('password');
                 $table->enum('role', ['admin', 'parents'])->default('parents'); // perhatikan typo "user" → seharusnya "parents"
                 $table->timestamps();
             });
