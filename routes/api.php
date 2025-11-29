@@ -46,10 +46,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Due Date Alerts (Admin lihat semua)
         Route::apiResource('due-date-alerts', DueDateAlertController::class);
-
-        // Notifications (Admin bisa buat/broadcast)
-        Route::apiResource('notifications', NotificationController::class);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
     });
 
     // 👩‍👧 Rute untuk PARENTS
@@ -78,6 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('bills', [BillController::class, 'index']);
         Route::get('bills/{bill}', [BillController::class, 'show']);
         Route::get('/payment-history', [PaymentController::class, 'history']);
+        Route::apiResource('notifications', NotificationController::class);
         
     });
 });

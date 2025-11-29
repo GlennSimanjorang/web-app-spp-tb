@@ -26,4 +26,9 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function bill()
+    {
+        return $this->belongsTo(\App\Models\Bill::class, 'bill_id');
+    }
 }
