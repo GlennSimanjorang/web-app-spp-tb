@@ -21,38 +21,24 @@ class StudentController extends Controller
 
     public function myStudents()
     {
-        \Log::info('🔍 myStudents accessed', [
-            'auth_id' => Auth::id(),
-            'user' => Auth::user()?->toArray(), // Log seluruh user
-            'role_type' => gettype(Auth::user()?->role),
-            'role_length' => strlen(Auth::user()?->role),
-            'role_debug' => '"' . Auth::user()?->role . '"', // Lihat spasi?
-        ]);
-
         $user = Auth::user();
 
-        if (!$user) {
-            \Log::warning('🚫 Unauthorized: no user authenticated');
-            return Formatter::apiResponse(401, 'Unauthorized');
-        }
-
-        if ($user->role !== 'parents') {
-            \Log::warning('🚫 Access denied: wrong role', [
-                'given_role' => $user->role,
-                'expected' => 'parents',
-                'roles_match' => $user->role === 'parents' ? 'yes' : 'no'
-            ]);
-            return Formatter::apiResponse(403, 'You are not authorized to access this page.');
-        }
+        \Log::info('🔍 myStudents role debug', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role_raw' => $user->role,
+            'role_type' => gettype($user->role),
+            'role_length' => strlen((string) $user->role),
+            'role_trimmed' => trim((string) $user->role),
+            'is_parents' => $user->role === 'parents',
+            'is_parents_trimmed' => trim((string) $user->role) === 'parents',
+        ]);
 
         $students = Student::where('user_id', $user->id)->get();
 
         if ($students->isEmpty()) {
-            \Log::info('📭 No students found for user', ['user_id' => $user->id]);
             return Formatter::apiResponse(404, 'Anda belum memiliki siswa terdaftar.');
         }
-
-        \Log::info('✅ Success: returning students', ['count' => $students->count()]);
 
         return Formatter::apiResponse(200, 'Daftar siswa Anda', $students);
     }

@@ -19,6 +19,15 @@ class RolePermission
     {
         $currentUser = Auth::guard('sanctum')->user();
 
+        \Log::info('🔍 RolePermission Debug', [
+            'has_user' => $currentUser !== null,
+            'user_id' => $currentUser?->id,
+            'user_email' => $currentUser?->email,
+            'user_role' => $currentUser?->role,
+            'expected_roles' => $roles,
+            'role_matches' => $currentUser && in_array($currentUser->role, $roles),
+        ]);
+
         if (!$currentUser) {
             return Formatter::apiResponse(401, "Unauthorized. Please login first.");
         }
@@ -30,7 +39,6 @@ class RolePermission
         }
 
         $request->merge(["user" => $currentUser]);
-
         return $next($request);
     }
 }
