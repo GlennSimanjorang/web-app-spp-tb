@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('due-date-alerts', DueDateAlertController::class);
 
         // Notifications (Admin bisa buat/broadcast)
-        Route::post('notifications', [NotificationController::class, 'store']);
+        Route::apiResource('notifications', NotificationController::class);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
     });
 
