@@ -45,13 +45,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('notifications/read-all', [NotificationController::class, 'markAllAsRead']);
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
         Route::get('mybills', [BillController::class, 'mybills']);
-        // Tidak ada students di sini — dipindah ke shared
     });
 
     // 👨‍💼 + 👩‍👧 Shared routes (admin & parents) — DITEMPATKAN LEBIH AWAL
     Route::middleware(['role:admin,parents'])->group(function () {
-        Route::get('bills', [BillController::class, 'index']);
-        Route::get('bills/{bill}', [BillController::class, 'show']);
         Route::get('payment-history', [PaymentController::class, 'history']);   
 
         // ✅ Route khusus parents: pastikan didefinisikan DI SINI (sebelum apiResource students di admin)
@@ -65,13 +62,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('academic-years', AcademicYearController::class);
         Route::apiResource('users', UserController::class);
         Route::apiResource('payment-categories', PaymentCategoryController::class);
-
-        // ✅ apiResource('students') DI SINI — SETELAH route my-students
         Route::apiResource('students', StudentController::class);
-
         Route::apiResource('bills', BillController::class);
-        Route::post('payments/{bill}', [PaymentController::class, 'store']);
-        Route::post('payments/midtrans/{bill}', [PaymentController::class, 'createMidtransTransaction']);
         Route::post('bills/generate-monthly', [BillController::class, 'generateMonthlyBills']);
         Route::apiResource('due-date-alerts', DueDateAlertController::class);
     });
