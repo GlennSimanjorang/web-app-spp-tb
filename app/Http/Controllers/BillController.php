@@ -22,7 +22,6 @@ class BillController extends Controller
             $query->whereHas('student.user', fn($q) => $q->where('id', $user->id));
         }
 
-        // 🔥 Filter: hanya tampilkan yang belum lunas
         $query->whereIn('status', ['unpaid', 'partial']);
 
         if ($request->filled('search')) {
@@ -38,6 +37,40 @@ class BillController extends Controller
         $bills = $query->latest()->paginate(10);
         return Formatter::apiResponse(200, 'Data tagihan ditemukan.', $bills);
     }
+
+    public function mybills(Request $request)
+    {
+        $user = Auth::user();
+
+        // Hanya parents yang boleh akses
+        if ($user->role !== 'parents') {
+            return Formatter::apiResponse(403, 'You are not authorized to access this page.');
+        }
+
+        // Bangun query: tagihan milik siswa yang diasuh oleh user ini
+        $query = Bill::with(['student', 'paymentCategory', 'academicYear'])
+            ->whereHas('student.user', function ($q) use ($user) {
+                $q->where('id', $user->id);
+            });
+
+        // Filter default: hanya yang belum lunas (opsional, sesuai kebutuhan)
+        $query->whereIn('status', ['unpaid', 'partial']);
+
+        // Filter opsional: pencarian berdasarkan bulan/tahun
+        if ($request->filled('search')) {
+            $query->where('month_year', 'like', '%' . $request->search . '%');
+        }
+
+        // Status bisa di-override via query (misal: ?status=unpaid)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $bills = $query->latest()->paginate(10);
+
+        return Formatter::apiResponse(200, 'Tagihan Anda ditemukan.', $bills);
+    }
+
     public function show(Bill $bill)
     {
         $this->authorize('view', $bill);

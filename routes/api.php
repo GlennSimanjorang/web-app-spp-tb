@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::put('notifications/read-all', [NotificationController::class, 'markAllAsRead']);
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
+        Route::get('mybills', [BillController::class, 'mybills']);
         // Tidak ada students di sini — dipindah ke shared
     });
 
