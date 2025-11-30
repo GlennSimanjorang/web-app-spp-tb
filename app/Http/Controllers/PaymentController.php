@@ -125,36 +125,93 @@ class PaymentController extends Controller
     /**
      * Webhook dari Midtrans - VERSION FIXED
      */
+    /**
+     * Webhook dari Midtrans — IMPLEMENTASI LENGKAP
+     */
     public function webhook(Request $request)
     {
         try {
-            Log::info('Midtrans Webhook Received:', $request->all());
+            $payload = $request->all();
+            Log::info('Midtrans Webhook Received', $payload);
 
-            $notificationData = $request->all();
-            $orderId = $notificationData['order_id'] ?? null;
+            // === 1. Verifikasi signature (WAJIB UNTUK KEAMANAN) ===
+            $serverKey = config('services.midtrans.server_key');
+            if (!$serverKey) {
+                Log::error('Midtrans server key tidak ditemukan di config/services.midtrans.server_key');
+                return response('Unauthorized', 401);
+            }
 
+            $expectedSignature = hash(
+                'sha512',
+                $payload['order_id'] .
+                    $payload['status_code'] .
+                    $payload['gross_amount'] .
+                    $serverKey
+            );
+
+            if (!hash_equals($expectedSignature, $payload['signature_key'] ?? '')) {
+                Log::warning('Signature tidak valid', $payload);
+                return response('Unauthorized', 401);
+            }
+
+            // === 2. Cari payment berdasarkan order_id ===
+            $orderId = $payload['order_id'] ?? null;
             if (!$orderId) {
-                Log::warning('Webhook tanpa order_id', $notificationData);
+                Log::warning('Webhook tanpa order_id', $payload);
                 return response()->json(['status' => 'ok']);
             }
 
             $payment = Payment::where('midtrans_order_id', $orderId)->first();
-
             if (!$payment) {
-                Log::warning('Payment tidak ditemukan untuk order_id: ' . $orderId, [
-                    'payload' => $notificationData
-                ]);
+                Log::warning('Payment tidak ditemukan untuk order_id: ' . $orderId, $payload);
                 return response()->json(['status' => 'ok']);
             }
 
-            // ... proses update payment seperti biasa ...
+            // === 3. Ambil status transaksi ===
+            $transactionStatus = $payload['transaction_status'] ?? 'unknown';
+            $fraudStatus = $payload['fraud_status'] ?? 'accept';
 
-            Log::info('Payment updated successfully: ' . $orderId);
-            return response()->json(['status' => 'ok']); // ✅ 200
+            // === 4. Tentukan status akhir berdasarkan aturan Midtrans ===
+            $newStatus = 'pending';
+            if (in_array($transactionStatus, ['capture', 'settlement']) && $fraudStatus === 'accept') {
+                $newStatus = 'success';
+            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                $newStatus = 'failed';
+            } else {
+                $newStatus = 'pending'; // atau 'pending' untuk challenge/otc
+            }
+
+            // === 5. Update hanya jika status berubah ===
+            if ($payment->status !== $newStatus) {
+                $payment->update([
+                    'status' => $newStatus,
+                    'midtrans_transaction_id' => $payload['transaction_id'] ?? null,
+                    'midtrans_payment_type' => $payload['payment_type'] ?? null,
+                    'midtrans_va_number' => $payload['va_numbers'][0]['va_number'] ?? null,
+                    'midtrans_fraud_status' => $fraudStatus,
+                    'midtrans_raw_response' => $payload,
+                ]);
+
+                Log::info("Payment status updated: {$orderId} → {$newStatus}");
+
+                // === 6. Jika sukses, update bill ===
+                if ($newStatus === 'success') {
+                    $bill = $payment->bill;
+                    if ($bill) {
+                        $this->updateBillStatus($bill);
+                    }
+                }
+            }
+
+            return response()->json(['status' => 'ok']); // Midtrans butuh 200 OK
 
         } catch (\Exception $e) {
-            Log::error('Webhook exception: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['status' => 'ok']); // ✅ tetap 200!
+            Log::error('Webhook error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'payload' => $request->all()
+            ]);
+            // Tetap return 200 agar Midtrans tidak terus retry
+            return response()->json(['status' => 'ok']);
         }
     }
 
