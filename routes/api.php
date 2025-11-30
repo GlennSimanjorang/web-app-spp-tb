@@ -39,7 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['role:parents'])->group(function () {
         Route::post('payments/{bill}', [PaymentController::class, 'store']);
         Route::post('payments/midtrans/{bill}', [PaymentController::class, 'createMidtransTransaction']);
-        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications', [NotificationController::class, 'myNotifications']);
+        Route::get('notifications/unread', [NotificationController::class, 'unread']);
         Route::put('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::put('notifications/read-all', [NotificationController::class, 'markAllAsRead']);
         Route::get('due-date-alerts', [DueDateAlertController::class, 'index']);
@@ -51,8 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['role:admin,parents'])->group(function () {
         Route::get('bills', [BillController::class, 'index']);
         Route::get('bills/{bill}', [BillController::class, 'show']);
-        Route::get('payment-history', [PaymentController::class, 'history']);
-        Route::apiResource('notifications', NotificationController::class);
+        Route::get('payment-history', [PaymentController::class, 'history']);   
 
         // ✅ Route khusus parents: pastikan didefinisikan DI SINI (sebelum apiResource students di admin)
         Route::get('students/my-students', [StudentController::class, 'myStudents']);
